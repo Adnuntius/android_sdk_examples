@@ -14,7 +14,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <com.adnuntius.sdk.lib.AdView
+    <com.adnuntius.android.sdk.AdView
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="244dp"
         android:layout_centerHorizontal="true"
