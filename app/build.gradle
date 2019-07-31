@@ -26,5 +26,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation files('C:\\Users\\Matthias\\Documents\\GitHub\\sdk_android\\lib\\build\\outputs\\aar\\lib-release.aar')
+
+    // this is currently the debug version, should be the actual release version
+    implementation files('libs/lib-debug.aar')
 }
