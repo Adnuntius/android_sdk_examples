@@ -1,17 +1,29 @@
 buildscript {
     repositories {
         google()
+        mavenCentral()
+
+        // https://youtrack.jetbrains.com/issue/IDEA-261387#focus=Comments-27-4677361.0-0
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.1.0'
     }
 }
 
 allprojects {
     repositories {
         google()
+        mavenCentral()
+
+        // com.android.volley is not on maven central yet, looks like 1.2.0 will be
+        // but its not released as yet
         jcenter()
+
+        // if you want to use a snapshot of the android-sdk
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
 }
 
