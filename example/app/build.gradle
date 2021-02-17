@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.adnuntius.example"
         minSdkVersion 21
@@ -20,5 +20,5 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.adnuntius.android:sdk:1.2.2'
+    implementation 'com.adnuntius.android:sdk:1.2.3'
 }
