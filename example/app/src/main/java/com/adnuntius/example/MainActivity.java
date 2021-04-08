@@ -31,33 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        adView.loadFromScript("<html>\n" +
-                "<head>\n" +
-                "<script type=\"text/javascript\" src=\"https://cdn.adnuntius.com/adn.js\" async></script>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "   <div id=\"adn-000000000006f450\" style=\"display:none\"></div>\n" +
-                "   <script type=\"text/javascript\">\n" +
-                "       window.adn = window.adn || {}; adn.calls = adn.calls || [];\n" +
-                "           adn.calls.push(function() {\n" +
-                "               adn.request({ adUnits: [\n" +
-                "                   {auId: '000000000006f450', auW: 300, auH: 200, kv: [{'version':'2.2.3'}] } " +
-                        "]}); " +
-                "   });</script>\n" +
-                "</body>\n" +
-                "</html>",
-                new CompletionHandler() {
-                    @Override
-                    public void onComplete(int adCount) {
-                        Log.d("MainActivity.adView", "Completed ad: " + adCount);
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-                        Log.d("MainActivity.adView", "Failure: " + error);
-                    }
-                });
-
         AdConfig config = new AdConfig("000000000006f450")
                 .setWidth(300)
                 .setHeight(200)
