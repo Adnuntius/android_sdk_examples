@@ -4,17 +4,27 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.adnuntius.android.sdk.AdConfig;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
+import com.adnuntius.android.sdk.AdnuntiusEnvironment;
 import com.adnuntius.android.sdk.CompletionHandler;
-import com.adnuntius.android.sdk.CompletionHandlerAdaptor;
+import com.adnuntius.android.sdk.data.DataClient;
+import com.adnuntius.android.sdk.data.DataResponseHandler;
+import com.adnuntius.android.sdk.data.profile.Instant;
+import com.adnuntius.android.sdk.data.profile.LocalDate;
+import com.adnuntius.android.sdk.data.profile.Profile;
+import com.adnuntius.android.sdk.data.profile.ProfileFields;
+import com.adnuntius.android.sdk.http.ErrorResponse;
+import com.adnuntius.android.sdk.http.HttpClient;
+import com.adnuntius.android.sdk.http.volley.VolleyHttpClient;
 
 
 public class MainActivity extends AppCompatActivity {
     private AdnuntiusAdWebView adView;
     private AdnuntiusAdWebView adView2;
-    private AdnuntiusAdWebView adView3;
+    private DataClient dataClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,44 +34,66 @@ public class MainActivity extends AppCompatActivity {
 
         this.adView = findViewById(R.id.adView);
         this.adView2 = findViewById(R.id.adView2);
-        this.adView3 = findViewById(R.id.adView3);
+
+        final HttpClient client = new VolleyHttpClient(getApplicationContext());
+        dataClient = new DataClient(AdnuntiusEnvironment.dev, client);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        final Profile profile = new Profile();
+        profile.setExternalSystemIdentifier("asdasd", "asdasdasd");
+        profile.setFolderId("000000000000009d");
+        profile.setBrowserId("23123123132123123213213");
+        profile.setProfileValue(ProfileFields.company, "Adnuntius");
+        profile.setProfileValue(ProfileFields.country, "Norway");
+        profile.setProfileValue(ProfileFields.dateOfBirth, LocalDate.now());
+        profile.setProfileValue(ProfileFields.createdAt, Instant.now());
+
+        dataClient.profile(profile, new DataResponseHandler() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(),"Data Client Profile Update Success", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(ErrorResponse response) {
+                Log.d("dataClient", "Data Client Profile Update Failure: " + response.getStatusCode());
+            }
+        });
+
         AdConfig config = new AdConfig("000000000006f450")
                 .setWidth(300)
                 .setHeight(200)
                 .addKeyValue("version", "4.3");
 
-        adView2.loadFromConfig(config,
+        adView.loadFromConfig(config,
                 new CompletionHandler() {
                     @Override
                     public void onComplete(int adCount) {
-                        Log.d("MainActivity.adView2", "Completed ad: " + adCount);
+                        Toast.makeText(getApplicationContext(),"loadFromConfig Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
-                        Log.d("MainActivity.adView2", "Failure: " + error);
+                        Log.d("MainActivity.adView", "loadFromConfig Failure: " + error);
                     }
                 });
 
-        adView3.loadFromApi("{\"adUnits\": [{\"auId\": \"000000000006f450\", \"kv\": [{\"version\":\"10\"}]}]}",
+        adView2.loadFromApi("{\"adUnits\": [{\"auId\": \"000000000006f450\", \"kv\": [{\"version\":\"10\"}]}]}",
                 new CompletionHandler() {
                     @Override
                     public void onComplete(int adCount) {
-                        Log.d("MainActivity.adView3", "Completed ad: " + adCount);
+                        Toast.makeText(getApplicationContext(),"loadFromApi Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
-                        Log.d("MainActivity.adView3", "Failure: " + error);
+                        Log.d("MainActivity.adView2", "loadFromApi Failure: " + error);
                     }
                 });
-
     }
 
     @Override
