@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         AdRequest request = new AdRequest("000000000006f450")
                 .setWidth(300)
                 .setHeight(200)
+                .noCookies()
                 .addKeyValue("version", "10");
 
         adView.loadAd(request,
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         AdRequest request2 = new AdRequest("000000000006f450")
                 .setWidth(300)
                 .setHeight(200)
+                .noCookies()
                 .addKeyValue("version", "4.3");
 
         adView2.loadAd(request2,
