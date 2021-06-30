@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.adnuntius.android.sdk.AdRequest;
@@ -103,10 +104,15 @@ public class MainActivity extends AppCompatActivity {
                 .setWidth(300)
                 .setHeight(200)
                 .noCookies()
-                .addKeyValue("version", "10");
+                .addKeyValue("version", "interstitial");
 
         adView.loadAd(request,
                 new CompletionHandler() {
+                    @Override
+                    public void onClose() {
+                        finish();
+                    }
+
                     @Override
                     public void onComplete(int adCount) {
                         Toast.makeText(getApplicationContext(),"adView loadAd Success", Toast.LENGTH_SHORT).show();
@@ -153,15 +159,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         if (adView != null) {
+            ((ViewGroup) adView.getParent()).removeView(adView);
+            adView.removeAllViews();
             adView.destroy();
         }
 
         if (adView2 != null) {
+            ((ViewGroup) adView2.getParent()).removeView(adView2);
+            adView2.removeAllViews();
             adView2.destroy();
         }
+
+        super.onDestroy();
     }
 
     @Override
