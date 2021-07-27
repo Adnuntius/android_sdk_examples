@@ -1,18 +1,13 @@
 buildscript {
-    ext.kotlin_version = "1.4.32"
+    ext.kotlin_version = "1.5.21"
     repositories {
         mavenLocal()
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        modules {
-            module("org.jetbrains.trove4j:trove4j") {
-                replacedBy("org.jetbrains.intellij.deps:trove4j")
-            }
-        }
     }
 }
 
