@@ -1,6 +1,10 @@
 # Android Examples
 
-Example for android sdk
+Example Apps for android sdk
+
+## Simple
+
+Loading an ad into a single web view via loadAd.   Also demonstrates using the onClose feature
 
 ## Example
 

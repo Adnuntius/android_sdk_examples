@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 .setWidth(300)
                 .setHeight(200)
                 .noCookies()
-                .addKeyValue("version", "interstitial");
+                .addKeyValue("version", "interstitial2");
 
         adView.loadAd(request,
                 new CompletionHandler() {
