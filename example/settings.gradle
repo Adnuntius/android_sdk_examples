@@ -1,5 +1,5 @@
 include ':app'
 
 // https://proandroiddev.com/saying-goodbye-to-snapshots-with-gradles-composite-builds-bc98751392f6
-include 'sdk'
+// include 'sdk'
 // project(':sdk').projectDir = new File('../../android_sdk/sdk')
