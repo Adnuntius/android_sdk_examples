@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -13,8 +14,12 @@ import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
 import com.adnuntius.android.sdk.CompletionHandler;
 
+import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     private AdnuntiusAdWebView adView;
 
     @Override
@@ -29,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        final String globalUserId = sharedPreferences.getString("globalUserId", null);
+        if (globalUserId == null) {
+            Log.d(TAG, "No User ID, generating!");
+            final SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("globalUserId", UUID.randomUUID().toString());
+            editor.commit();
+        }
 
         adView.loadBlankPage();
 
@@ -45,10 +59,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadAd() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        final String globalUserId = sharedPreferences.getString("globalUserId", null);
+        final String sessionId = UUID.randomUUID().toString();
+        Log.d(TAG, "Global User ID " + globalUserId);
+
         AdRequest request = new AdRequest("000000000006f450")
                 .setWidth(320)
                 .setHeight(480)
                 .noCookies()
+                .userId(globalUserId) // a null value will be ignored
+                .sessionId(sessionId)
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
                 .addKeyValue("version", "interstitial2")
                 ;
