@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 .noCookies()
                 .userId(globalUserId) // a null value will be ignored
                 .sessionId(sessionId)
+                .consentString("some consent string")
+                .globalParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
                 .addKeyValue("version", "interstitial2")
                 ;
