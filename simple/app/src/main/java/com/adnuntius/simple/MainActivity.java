@@ -67,15 +67,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Global User ID " + globalUserId);
 
         AdRequest request = new AdRequest("000000000006f450")
-                .setWidth(320)
-                .setHeight(480)
-                .noCookies()
+                .setWidth(300)
+                .setHeight(160)
+                .useCookies(false)
                 .userId(globalUserId) // a null value will be ignored
                 .sessionId(sessionId)
                 .consentString("some consent string")
                 .parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
-                .addKeyValue("version", "unspecified")
+                .addKeyValue("version", "10")
                 ;
 
         adView.loadAd(request,
@@ -87,7 +87,11 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete(int adCount) {
-                        Toast.makeText(getApplicationContext(),"adView loadAd Success", Toast.LENGTH_SHORT).show();
+                        if (adCount > 0) {
+                            Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
