@@ -115,7 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete(int adCount) {
-                        Toast.makeText(getApplicationContext(),"adView loadAd Success", Toast.LENGTH_SHORT).show();
+                        if (adCount > 0) {
+                            Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
@@ -134,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
                 new CompletionHandler() {
                     @Override
                     public void onComplete(int adCount) {
-                        Toast.makeText(getApplicationContext(),"adView2 loadAd Success", Toast.LENGTH_SHORT).show();
+                        if (adCount > 0) {
+                            Toast.makeText(getApplicationContext(), "adView2 loadAd Success", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "adView2 loadAd no ad", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override

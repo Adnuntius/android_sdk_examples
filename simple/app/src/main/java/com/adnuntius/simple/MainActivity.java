@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        adView.loadBlankPage();
+        //adView.loadBlankPage();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name);
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 .consentString("some consent string")
                 .parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
-                .addKeyValue("version", "interstitial2")
+                .addKeyValue("version", "unspecified")
                 ;
 
         adView.loadAd(request,
