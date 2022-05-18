@@ -5,16 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
+import com.adnuntius.android.sdk.AdnuntiusEnvironment;
 import com.adnuntius.android.sdk.CompletionHandler;
+import com.adnuntius.android.sdk.ad.AdClient;
+import com.adnuntius.android.sdk.ad.AdResponse;
+import com.adnuntius.android.sdk.ad.AdResponseHandler;
+import com.adnuntius.android.sdk.http.ErrorResponse;
+import com.adnuntius.android.sdk.http.HttpClient;
+import com.adnuntius.android.sdk.http.HttpResponseHandler;
+import com.adnuntius.android.sdk.http.HttpUtils;
+import com.adnuntius.android.sdk.http.volley.VolleyHttpClient;
 
 import java.util.UUID;
 
@@ -23,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private AdnuntiusAdWebView adView;
+    private AdClient adClient;
+    private AdnuntiusEnvironment env = AdnuntiusEnvironment.andemu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.adView = findViewById(R.id.adView);
+
+        this.adView.setEnvironment(env);
+        adView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        final HttpClient client = new VolleyHttpClient(getApplicationContext());
+        adClient = new AdClient(env, client);
+
+        client.getRequest("http://10.0.2.2:8001/adn.src.js?override-script=andemu", new HttpResponseHandler() {
+
+            @Override
+            public void onFailure(ErrorResponse response) {
+                Log.e(TAG, response.getMessage());
+            }
+
+            @Override
+            public void onSuccess(String response) {
+                Log.i(TAG, "On success is " + response);
+            }
+        });
+        //handler.waitForMessages(1);
+        //assertEquals(1, handler.responses.size());
+        //Log.i(TAG, handler.responses.get(0));
     }
 
     @Override
@@ -46,16 +77,12 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        //adView.loadBlankPage();
+        adView.loadBlankPage();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name);
         builder.setMessage("Click Ok to load the Ad");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                loadAd();
-            }
-        });
+        builder.setPositiveButton("Ok", (dialog, id) -> loadAd());
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -69,14 +96,25 @@ public class MainActivity extends AppCompatActivity {
         AdRequest request = new AdRequest("000000000006f450")
                 .setWidth(300)
                 .setHeight(160)
-                .useCookies(false)
-                .userId(globalUserId) // a null value will be ignored
-                .sessionId(sessionId)
-                .consentString("some consent string")
-                .parentParameter("gdpr", "1")
+                //.useCookies(false)
+                //.userId(globalUserId) // a null value will be ignored
+                //.sessionId(sessionId)
+                //.consentString("some consent string")
+                //.parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
-                .addKeyValue("version", "10")
-                ;
+                .addKeyValue("version", "10");
+
+//        adClient.request(request, new AdResponseHandler() {
+//            @Override
+//            public void onSuccess(AdResponse response) {
+//                adView.loadDataWithBaseURL(HttpUtils.getDeliveryUrl(env, null), response.getHtml(), "text/html", "UTF-8", null);
+//            }
+//
+//            @Override
+//            public void onFailure(ErrorResponse error) {
+//                Log.d("MainActivity.adView", "adView adClient load data with base url failed: " + error.getMessage());
+//            }
+//        });
 
         adView.loadAd(request,
                 new CompletionHandler() {
