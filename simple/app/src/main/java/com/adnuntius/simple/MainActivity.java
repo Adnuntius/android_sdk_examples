@@ -3,17 +3,16 @@ package com.adnuntius.simple;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
+import com.adnuntius.android.sdk.AdnuntiusEnvironment;
 import com.adnuntius.android.sdk.CompletionHandler;
 
 import java.util.UUID;
@@ -23,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private AdnuntiusAdWebView adView;
+    private AdnuntiusEnvironment env = AdnuntiusEnvironment.production;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.adView = findViewById(R.id.adView);
+
+        this.adView.setEnvironment(env);
+        adView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
     @Override
@@ -46,16 +49,12 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        //adView.loadBlankPage();
+        adView.loadBlankPage();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name);
         builder.setMessage("Click Ok to load the Ad");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                loadAd();
-            }
-        });
+        builder.setPositiveButton("Ok", (dialog, id) -> loadAd());
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -75,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 .consentString("some consent string")
                 .parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
-                .addKeyValue("version", "10")
-                ;
+                .addKeyValue("version", "10");
 
         adView.loadAd(request,
                 new CompletionHandler() {
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String error) {
-                        Log.d("MainActivity.adView", "adView loadAd Failure: " + error);
+                        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
