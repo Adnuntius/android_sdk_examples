@@ -76,6 +76,7 @@ def check_creatives_serving(ad_server, ad_unit_tag, assets):
 def create_sdk_site_ad_unit(api, suffix):
     team = api.teams.get('defaultteam')
 
+    print('Creating site SdkSite ' + suffix)
     site = api.sites.update({
         'id': generate_alphanum_id(),
         'name': 'SdkSite ' + suffix,
@@ -135,7 +136,7 @@ def get_image_filename_info(image_filename):
             version = 'unspecified'
 
     elif 'iphone' in base_image_filename:
-        target_os = 'iphone'
+        target_os = 'ios'
         version = base_image_filename.replace('iphone-', '').replace('-no-device-targeting', '')
         if version == 'iphone':
             version = 'unspecified'
@@ -157,6 +158,9 @@ def get_image_file_info(image_filename):
 def create_sdk_creative(api, lineitem, layout, image_filename):
     image_file, mime_type, name, target_os, version, device_targeting, width, height = get_image_file_info(image_filename)
 
+    destination_url = 'https://github.com/Adnuntius/' + target_os + '_sdk'
+    destination_url += '#no-device-targeting' if not device_targeting else ''
+
     creative = api.creatives.update({
         'id': generate_alphanum_id(),
         'name': name,
@@ -165,7 +169,7 @@ def create_sdk_creative(api, lineitem, layout, image_filename):
         'width': width,
         'height': height,
         'constraintsToUrls': {
-            'destination': 'https://github.com/Adnuntius/android_sdk'
+            'destination': destination_url
         }
     })
 
@@ -178,7 +182,7 @@ def create_sdk_creative(api, lineitem, layout, image_filename):
     creative['targeting'] = {}
     if target_os == 'android' and device_targeting:
         creative['targeting']['deviceTargets'] = {'targetedOSes': ['ANDROID']}
-    elif target_os == 'iphone' and device_targeting:
+    elif target_os == 'ios' and device_targeting:
         creative['targeting']['deviceTargets'] = {'targetedOSes': ['IOS']}
 
     creative['targeting']['keyValueTargets'] = {
@@ -194,6 +198,7 @@ def setup_sdk_domain(api):
 
     site, ad_unit, ad_unit_tag, team, layout = create_sdk_site_ad_unit(api, suffix)
 
+    print('Creating order SdkOrder ' + suffix)
     order = api.orders.update({
             'id': generate_alphanum_id(),
             'name': 'SdkOrder ' + suffix,
