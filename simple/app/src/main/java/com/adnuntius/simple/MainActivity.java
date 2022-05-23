@@ -14,6 +14,13 @@ import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
 import com.adnuntius.android.sdk.AdnuntiusEnvironment;
 import com.adnuntius.android.sdk.CompletionHandler;
+import com.adnuntius.android.sdk.ad.AdClient;
+import com.adnuntius.android.sdk.ad.AdResponse;
+import com.adnuntius.android.sdk.ad.AdResponseHandler;
+import com.adnuntius.android.sdk.http.ErrorResponse;
+import com.adnuntius.android.sdk.http.HttpClient;
+import com.adnuntius.android.sdk.http.HttpUtils;
+import com.adnuntius.android.sdk.http.volley.VolleyHttpClient;
 
 import java.util.UUID;
 
@@ -75,6 +82,21 @@ public class MainActivity extends AppCompatActivity {
                 .parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
                 .addKeyValue("version", "10");
+
+//        final HttpClient client = new VolleyHttpClient(getApplicationContext());
+//        AdClient adClient = new AdClient(AdnuntiusEnvironment.production, client);
+//        adClient.request(request, new AdResponseHandler() {
+//            @Override
+//            public void onSuccess(AdResponse response) {
+//                final String baseUrl = HttpUtils.getDeliveryUrl(env, "/i", null);
+//                adView.loadDataWithBaseURL(baseUrl, response.getHtml(),"text/html", "UTF-8", null);
+//            }
+//
+//            @Override
+//            public void onFailure(ErrorResponse response) {
+//                Toast.makeText(getApplicationContext(), response.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         adView.loadAd(request,
                 new CompletionHandler() {
