@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import getpass
+import argparse
 import sys
 from os import listdir
 from os.path import isfile, join
@@ -11,14 +13,6 @@ from adnuntius.api import Api, AdServer
 from adnuntius.util import generate_alphanum_id, date_to_string, id_reference
 from bs4 import BeautifulSoup
 import urllib.parse
-
-
-network_id = 'network_1'
-admin_user = 'broker1@adnuntius.com'
-admin_password = 'abc**123'
-api_url = 'http://localhost:8079/api'
-ad_server_host = 'http://localhost'
-ad_server_port = 8078
 
 
 def retry(what, retries, func, sleep_time=1):
@@ -195,10 +189,7 @@ def create_sdk_creative(api, lineitem, layout, image_filename):
     return asset
 
 
-def setup_sdk_domain():
-    api = Api(admin_user, admin_password, location=api_url)
-    api.defaultArgs['context'] = network_id
-
+def setup_sdk_domain(api):
     suffix = generate_alphanum_id(4)
 
     site, ad_unit, ad_unit_tag, team, layout = create_sdk_site_ad_unit(api, suffix)
@@ -232,10 +223,32 @@ def setup_sdk_domain():
 
 
 if __name__ == '__main__':
-    site, order, site, ad_unit_tag, assets = setup_sdk_domain()
-  
-    print("Test that Ad Unit " + ad_unit_tag['auId'] + " is serving ads ...")
-    ad_server = AdServer(ad_server_host, port=ad_server_port)
-    check_creatives_serving(ad_server, ad_unit_tag, assets)
-    
-    
+    parser = argparse.ArgumentParser(description="Create a new network in adnuntius")
+    parser.add_argument('--query', dest='query', action="store_true", default=False)
+    parser.add_argument('--api', dest='api', default='http://localhost:8079/api')
+    parser.add_argument('--adserver', dest='adserver', default='http://localhost:8078')
+    parser.add_argument('--networkId', dest='networkId', default='network_1')
+    parser.add_argument('--adminUser', dest='adminUser', default='broker1@adnuntius.com')
+    parser.add_argument('--adminPassword', dest='adminPassword', default='abc**123')
+    args = parser.parse_args()
+
+    adminPassword = args.adminPassword
+    if 'localhost' not in args.api:
+        adminPassword = getpass.getpass('Enter admin password:')
+
+    api = Api(args.adminUser, adminPassword, location=args.api)
+    api.defaultArgs['context'] = args.networkId
+
+    if args.query:
+        ad_units = api.ad_units.query({'pageSize': 5000})['results']
+        if len(ad_units) > 0:
+            for ad_unit in ad_units:
+                if "SDKAdUnit" in ad_unit['name']:
+                    ad_unit_tag = api.ad_unit_tags.get(ad_unit['id'])
+                    print("Found SDKAdUnit: " + str(ad_unit['name']) + " (" + ad_unit_tag['auId'] + ")")
+    else:
+        site, order, site, ad_unit_tag, assets = setup_sdk_domain(api)
+
+        ad_server = AdServer(args.adserver)
+        print("Test that Ad Unit " + ad_unit_tag['auId'] + " is serving ads ...")
+        check_creatives_serving(ad_server, ad_unit_tag, assets)
