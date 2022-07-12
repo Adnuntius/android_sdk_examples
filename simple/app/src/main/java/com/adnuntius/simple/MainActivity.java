@@ -15,6 +15,7 @@ import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
 import com.adnuntius.android.sdk.AdnuntiusEnvironment;
 import com.adnuntius.android.sdk.CompletionHandler;
+import com.adnuntius.android.sdk.LoadAdHandler;
 import com.adnuntius.android.sdk.ad.AdClient;
 import com.adnuntius.android.sdk.ad.AdResponse;
 import com.adnuntius.android.sdk.ad.AdResponseHandler;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AdnuntiusAdWebView adView;
     private AdClient adClient;
-    private AdnuntiusEnvironment env = AdnuntiusEnvironment.andemu;
+    private AdnuntiusEnvironment env = AdnuntiusEnvironment.production;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +48,18 @@ public class MainActivity extends AppCompatActivity {
         final HttpClient client = new VolleyHttpClient(getApplicationContext());
         adClient = new AdClient(env, client);
 
-        client.getRequest("http://10.0.2.2:8001/adn.src.js?override-script=andemu", new HttpResponseHandler() {
-
-            @Override
-            public void onFailure(ErrorResponse response) {
-                Log.e(TAG, response.getMessage());
-            }
-
-            @Override
-            public void onSuccess(String response) {
-                Log.i(TAG, "On success is " + response);
-            }
-        });
+//        client.getRequest("http://10.0.2.2:8001/adn.src.js?override-script=andemu", new HttpResponseHandler() {
+//
+//            @Override
+//            public void onFailure(ErrorResponse response) {
+//                Log.e(TAG, response.getMessage());
+//            }
+//
+//            @Override
+//            public void onSuccess(String response) {
+//                Log.i(TAG, "On success is " + response);
+//            }
+//        });
         //handler.waitForMessages(1);
         //assertEquals(1, handler.responses.size());
         //Log.i(TAG, handler.responses.get(0));
@@ -117,24 +118,25 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         adView.loadAd(request,
-                new CompletionHandler() {
+                new LoadAdHandler() {
                     @Override
-                    public void onClose() {
-                        finish();
+                    public void onAdResponse(AdResponseInfo info) {
+                        Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onComplete(int adCount) {
-                        if (adCount > 0) {
-                            Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onNoAdResponse() {
+                        Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
                         Log.d("MainActivity.adView", "adView loadAd Failure: " + error);
+                    }
+
+                    @Override
+                    public void onLayoutCloseView() {
+                        finish();
                     }
                 });
     }
