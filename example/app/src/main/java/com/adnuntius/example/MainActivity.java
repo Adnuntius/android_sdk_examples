@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
 import com.adnuntius.android.sdk.AdnuntiusEnvironment;
-import com.adnuntius.android.sdk.CompletionHandler;
+import com.adnuntius.android.sdk.LoadAdHandler;
 import com.adnuntius.android.sdk.data.DataClient;
 import com.adnuntius.android.sdk.data.DataResponseHandler;
 import com.adnuntius.android.sdk.data.Page;
@@ -107,24 +107,25 @@ public class MainActivity extends AppCompatActivity {
                 .addKeyValue("version", "10");
 
         adView.loadAd(request,
-                new CompletionHandler() {
+                new LoadAdHandler() {
                     @Override
-                    public void onClose() {
-                        finish();
+                    public void onAdResponse(AdResponseInfo info) {
+                        Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onComplete(int adCount) {
-                        if (adCount > 0) {
-                            Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onNoAdResponse() {
+                        Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
-                        Log.d("MainActivity.adView", "adView loadAd Failure: " + error);
+                        Log.d("MainActivity.adView2", "adView loadAd Failure: " + error);
+                    }
+
+                    @Override
+                    public void onLayoutCloseView() {
+                        finish();
                     }
                 });
 
@@ -135,19 +136,25 @@ public class MainActivity extends AppCompatActivity {
                 .addKeyValue("version", "4.3");
 
         adView2.loadAd(request2,
-                new CompletionHandler() {
+                new LoadAdHandler() {
                     @Override
-                    public void onComplete(int adCount) {
-                        if (adCount > 0) {
-                            Toast.makeText(getApplicationContext(), "adView2 loadAd Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "adView2 loadAd no ad", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onAdResponse(AdResponseInfo info) {
+                        Toast.makeText(getApplicationContext(), "adView2 loadAd Success", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNoAdResponse() {
+                        Toast.makeText(getApplicationContext(), "adView2 loadAd no ad", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
                         Log.d("MainActivity.adView2", "adView2 loadAd Failure: " + error);
+                    }
+
+                    @Override
+                    public void onLayoutCloseView() {
+                        finish();
                     }
                 });
     }
