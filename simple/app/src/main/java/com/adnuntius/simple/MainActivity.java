@@ -13,14 +13,7 @@ import android.widget.Toast;
 import com.adnuntius.android.sdk.AdRequest;
 import com.adnuntius.android.sdk.AdnuntiusAdWebView;
 import com.adnuntius.android.sdk.AdnuntiusEnvironment;
-import com.adnuntius.android.sdk.CompletionHandler;
-import com.adnuntius.android.sdk.ad.AdClient;
-import com.adnuntius.android.sdk.ad.AdResponse;
-import com.adnuntius.android.sdk.ad.AdResponseHandler;
-import com.adnuntius.android.sdk.http.ErrorResponse;
-import com.adnuntius.android.sdk.http.HttpClient;
-import com.adnuntius.android.sdk.http.HttpUtils;
-import com.adnuntius.android.sdk.http.volley.VolleyHttpClient;
+import com.adnuntius.android.sdk.LoadAdHandler;
 
 import java.util.UUID;
 
@@ -99,24 +92,25 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         adView.loadAd(request,
-                new CompletionHandler() {
+                new LoadAdHandler() {
                     @Override
-                    public void onClose() {
-                        finish();
+                    public void onAdResponse(AdResponseInfo info) {
+                        Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onComplete(int adCount) {
-                        if (adCount > 0) {
-                            Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onNoAdResponse() {
+                        Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String error) {
                         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onLayoutCloseView() {
+                        finish();
                     }
                 });
     }
