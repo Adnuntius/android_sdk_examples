@@ -33,14 +33,13 @@ public class MainActivity extends AppCompatActivity {
         this.adView = findViewById(R.id.adView);
 
         this.adView.setEnvironment(env);
-        adView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         final String globalUserId = sharedPreferences.getString("globalUserId", null);
         if (globalUserId == null) {
             Log.d(TAG, "No User ID, generating!");
@@ -49,23 +48,24 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
+        adView.logger.debug = true;
         adView.loadBlankPage();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.app_name);
         builder.setMessage("Click Ok to load the Ad");
         builder.setPositiveButton("Ok", (dialog, id) -> loadAd());
-        AlertDialog alert = builder.create();
+        final AlertDialog alert = builder.create();
         alert.show();
     }
 
     private void loadAd() {
-        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         final String globalUserId = sharedPreferences.getString("globalUserId", null);
         final String sessionId = UUID.randomUUID().toString();
         Log.d(TAG, "Global User ID " + globalUserId);
 
-        AdRequest request = new AdRequest("000000000006f450")
+        final AdRequest request = new AdRequest("000000000006f450")
                 .setWidth(300)
                 .setHeight(160)
                 .useCookies(false)
@@ -92,31 +92,32 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         adView.loadAd(request,
+                false,
                 new LoadAdHandler() {
                     @Override
-                    public void onAdResponse(AdResponseInfo info) {
+                    public void onAdResponse(final AdnuntiusAdWebView view, final AdResponseInfo info) {
                         Toast.makeText(getApplicationContext(), "adView loadAd Success", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onNoAdResponse() {
+                    public void onNoAdResponse(final AdnuntiusAdWebView view) {
                         Toast.makeText(getApplicationContext(), "adView loadAd no ad", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onFailure(String error) {
+                    public void onFailure(final AdnuntiusAdWebView view, final String error) {
                         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onLayoutCloseView() {
+                    public void onLayoutCloseView(final AdnuntiusAdWebView view) {
                         finish();
                     }
                 });
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         if (adView != null) {
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
 
         if (adView != null) {
