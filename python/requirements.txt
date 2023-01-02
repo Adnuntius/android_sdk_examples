@@ -1,4 +1,4 @@
-Pillow==9.1.1
+Pillow==9.2.0
 beautifulsoup4==4.9.3
 adnuntius==1.11.1
 requests==2.25.1
