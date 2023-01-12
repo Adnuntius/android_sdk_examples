@@ -3,7 +3,7 @@
 You could theoretically use this against dev, staging or production, providing the correct credentials
 by modifying the script.   However out of the box this script is for a local adnuntius environment.
 
-Sso this is really only relevant to adnuntius developers as we will not provide access to a local 
+So this is really only relevant to adnuntius developers as we will not provide access to a local 
 environment for anyone else.
 
 ## Android Emulator
