@@ -1,12 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.adnuntius.example"
         minSdkVersion 30
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -20,7 +18,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.adnuntius.android:sdk:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.adnuntius.android:sdk:1.7.1'
     //implementation project (':sdk')
 }
