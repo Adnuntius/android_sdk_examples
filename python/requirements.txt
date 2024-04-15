@@ -1,5 +1,0 @@
-adnuntius==1.11.1
-pillow==10.0.1
-python-dateutil==2.8.1
-requests==2.31.0
-requests_toolbelt==0.9.1
