@@ -11,7 +11,6 @@ import os
 from datetime import timedelta, date, datetime
 from adnuntius.api import Api, AdServer
 from adnuntius.util import generate_alphanum_id, date_to_string, id_reference
-from bs4 import BeautifulSoup
 import urllib.parse
 
 
@@ -41,14 +40,7 @@ def retry(what, retries, func, sleep_time=1):
 
 
 def validate_served_ad(html, asset):
-    soup = BeautifulSoup(html, "html.parser")
-
-    # currently we can't validate the click token url, so just do a basic check
-    assert soup.html.body.a is not None, "Html body in wrong format: " + str(soup.html.body)
-    assert soup.html.body.a['href'].startswith("http://"), "Html ref in wrong format: " + str(soup.html.body.a['href'])
-    assert soup.html.body.a.img['width'] == str(asset["width"]), "Width is incorrect"
-    assert soup.html.body.a.img['height'] == str(asset["height"]), "Height is incorrect"
-    assert soup.html.body.a.img['src'] == asset["cdnId"], "CdnId is incorrect: Expected %r got %r" % (soup.html.body.a.img['src'], asset["cdnId"])
+    assert asset["cdnId"] in html
 
 
 def check_ad_serving(ad_server, ad_unit_tag, asset, user_agent, version, retries=120, sleep_time=1):
@@ -83,6 +75,51 @@ def create_sdk_site_ad_unit(api, suffix):
         'teams': [team['id']]
     })
 
+    responsive_template = '''
+    <a href="{{{urls.destination.url}}}" rel="nofollow" target="_top">
+  <img src="{{{assets.image.cdnId}}}" style="width: 100%">
+</a>
+<script>
+  (function() {
+    adn.util.forEach(document.getElementsByClassName("contentWrapperPerItem"), function(el) {
+      el.style.width = "100%";
+    });
+
+    var iframeId = adn.inIframe.getIframeId();
+    var container = document.getElementById('{{responseId}}');
+    container.style.display = "block";
+    var responsiveIframe = function() {
+      adn.inIframe.updateAd({
+        ifrH: container.offsetHeight,
+        ifrStyle: {width: '1px', 'min-width': '100%', '*width': '100%', 'width': '100%'},
+        ifrId: iframeId
+      });
+    };
+
+    adn.util.addEventListener(window, 'resize', responsiveIframe);
+    adn.util.addEventListener(window, 'load', responsiveIframe);
+    adn.inIframe.blockResizeToContent();
+    responsiveIframe();
+  })();
+</script>
+    '''
+
+    responsive_layout = api.layouts.update({
+        'id': generate_alphanum_id(),
+        'name': 'SdkLayout Responsive ' + suffix,
+        'renderTemplate': responsive_template,
+        'layoutComponents': [{
+            'type': 'ASSET',
+            'tag': 'image',
+            'mimeTypes': ['IMAGE_JPEG', 'IMAGE_PNG', 'IMAGE_GIF'],
+            'maxFileSizeBytes': 500000
+        }, {
+            'type': 'URL',
+            'tag': 'destination',
+            'protocol': 'https'
+        }]
+    })
+
     render_template = '<a href="{{{urls.destination.url}}}"><img src="{{{assets.image.cdnId}}}" width="{{assets.image.width}}" height="{{assets.image.height}}" style="width:{{assets.image.width}}px; height:{{assets.image.height}}px"/></a>'
     layout = api.layouts.update({
         'id': generate_alphanum_id(),
@@ -103,15 +140,15 @@ def create_sdk_site_ad_unit(api, suffix):
     ad_unit = api.ad_units.update({
         'id': generate_alphanum_id(),
         'name': 'SDKAdUnit ' + suffix,
-        'width': '320',
-        'height': '480',
+        'width': '1920',
+        'height': '1200',
         'pageSize': '1',
         'site': site['id']
     })
 
     ad_unit_tag = api.ad_unit_tags.get(ad_unit['id'])
 
-    return site, ad_unit, ad_unit_tag, team, layout
+    return site, ad_unit, ad_unit_tag, team, layout, responsive_layout
 
 
 def get_assets_path():
@@ -196,7 +233,7 @@ def create_sdk_creative(api, lineitem, layout, image_filename):
 def setup_sdk_domain(api):
     suffix = generate_alphanum_id(4)
 
-    site, ad_unit, ad_unit_tag, team, layout = create_sdk_site_ad_unit(api, suffix)
+    site, ad_unit, ad_unit_tag, team, layout, responsive_layout = create_sdk_site_ad_unit(api, suffix)
 
     print('Creating order SdkOrder ' + suffix)
     order = api.orders.update({
@@ -221,7 +258,7 @@ def setup_sdk_domain(api):
     image_filenames = get_image_filenames()
     assets = []
     for image_filename in image_filenames:
-        asset = create_sdk_creative(api, lineitem, layout, image_filename)
+        asset = create_sdk_creative(api, lineitem, layout if 'responsive' not in image_filename else responsive_layout, image_filename)
         assets.append(asset)
 
     return site, order, site, ad_unit_tag, assets

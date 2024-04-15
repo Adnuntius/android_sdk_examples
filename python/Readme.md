@@ -15,7 +15,9 @@ ng.cdn.in.memory.host=10.0.2.2
 ## Python Requirements
 
 ```
-python3 -m pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install --no-cache-dir -r requirements.txt --upgrade
 ```
 
 ## Existing Ad Units

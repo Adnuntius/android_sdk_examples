@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adView.logger.debug = true;
+        adView.setEnvironment(AdnuntiusEnvironment.andemu);
         adView.loadBlankPage();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -65,16 +66,16 @@ public class MainActivity extends AppCompatActivity {
         final String sessionId = UUID.randomUUID().toString();
         Log.d(TAG, "Global User ID " + globalUserId);
 
-        final AdRequest request = new AdRequest("000000000006f450")
-                .setWidth(300)
-                .setHeight(160)
+        final AdRequest request = new AdRequest("5cd")
+                .setWidth(1002)
+                //.setHeight(160)
                 .useCookies(false)
                 .userId(globalUserId) // a null value will be ignored
                 .sessionId(sessionId)
                 .consentString("some consent string")
                 .parentParameter("gdpr", "1")
                 //.livePreview("7pmy5r9rj62fyhjm", "9198pft3cvktmg8d")
-                .addKeyValue("version", "10");
+                .addKeyValue("version", "responsive");
 
 //        final HttpClient client = new VolleyHttpClient(getApplicationContext());
 //        AdClient adClient = new AdClient(AdnuntiusEnvironment.production, client);

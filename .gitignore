@@ -72,3 +72,5 @@ lint/tmp/
 # lint/reports/
 
 .DS_Store
+
+/python/.venv
