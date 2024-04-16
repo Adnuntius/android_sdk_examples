@@ -2,6 +2,7 @@ package com.adnuntius.example;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -99,8 +100,21 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+        adView.logger.debug = true;
+        adView.logger.verbose = true;
+        adView.setEnvironment(AdnuntiusEnvironment.production);
+        adView.loadBlankPage();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("Click Ok to load the Ad");
+        builder.setPositiveButton("Ok", (dialog, id) -> loadAd());
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void loadAd() {
         AdRequest request = new AdRequest("000000000006f450")
-                .setWidth(300)
+                .setWidth(320)
                 .setHeight(200)
                 .useCookies(false)
                 .addKeyValue("version", "10");
