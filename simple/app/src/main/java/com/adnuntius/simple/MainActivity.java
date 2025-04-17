@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adView.logger.debug = true;
-        adView.setEnvironment(AdnuntiusEnvironment.andemu);
+        //adView.setEnvironment(AdnuntiusEnvironment.andemu);
         adView.loadBlankPage();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         final String sessionId = UUID.randomUUID().toString();
         Log.d(TAG, "Global User ID " + globalUserId);
 
-        final AdRequest request = new AdRequest("5cd")
+        final AdRequest request = new AdRequest("6f450")
                 .setWidth(1002)
                 //.setHeight(160)
                 .useCookies(false)

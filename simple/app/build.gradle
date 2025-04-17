@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    compileSdk 35
     defaultConfig {
         applicationId "com.adnuntius.example"
         minSdkVersion 30
@@ -19,6 +20,6 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.adnuntius.android:sdk:1.7.1'
+    implementation 'com.adnuntius.android:sdk:1.7.3'
     //implementation project (':sdk')
 }
